@@ -72,12 +72,7 @@ fishShelve.close()
 
 
 
-# print(len(fishData.keys()))
-# print(fishes[0])
 
-#build object
-
-# Builder/scraper finds top 10 fish in nyc area
 # grabs [Locations:list,general stats(descriptions),]
 # builds object fishes = {
 # fish1 :{stuff},
