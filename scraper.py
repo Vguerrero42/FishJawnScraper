@@ -54,6 +54,7 @@ def buildFishObj() :
 
       description = currentPage.find(class_='mw-empty-elt').find_next_sibling("p").text.strip()      
     except:
+      #for debugging,initial searched for id of description but wiki articles are not uniform so changed to searching for first paragraph which in every wiki article is generally a quick description of subject.
       print(f'ERROR COUNT {count}')
       print(f'ERROR LINK {link[1]}')
       # after building fish "profiles" all data written to text FishShelve
@@ -62,6 +63,7 @@ def buildFishObj() :
     
 buildFishObj()
 
+#for debugging to ensure data written correctly.
 for key in fishShelve.keys() :
   print(key,fishShelve[f'{key}'])
 
