@@ -6,8 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import shelve
 import os
-import asyncio
-import time
+
 
 ua = UserAgent()
 
@@ -42,7 +41,7 @@ fishes =  currentPage.select('#mw-content-text > div.mw-parser-output > ul:nth-c
 linkList = hrefStripper.findall(str(fishes[0]))
 
 
-#Navigate list, for each fish go to wiki page,grab first paragrahph ORdescription paragraph
+#Navigate list, for each fish go to wiki page,grab first paragrahph OR description paragraph
 
 
 def buildFishObj() :
@@ -54,7 +53,7 @@ def buildFishObj() :
     try:
       #look for h2 tag with id of description and grab that
       # description = currentPage.find(id="Description").find_parent(). find_next_sibling("p").text.strip()
-      # print(description)
+
       description = currentPage.find(class_='mw-empty-elt').find_next_sibling("p").text.strip()      
     except:
       count += 1
@@ -77,15 +76,13 @@ fishShelve.close()
 # print(len(fishData.keys()))
 # print(fishes[0])
 
-# print(requests.get("http://en.wikipedia.org/wiki/American_shad").text)
 #build object
 
 # Builder/scraper finds top 10 fish in nyc area
-# Scraper finds Fish page on wiki
 # grabs [Locations:list,general stats(descriptions),]
 # builds object fishes = {
 # fish1 :{stuff},
 # fish2:{stuff}
 # }
-# after building fish "profiles" all data written to text fishData.txt
+# after building fish "profiles" all data written to text fishshelve
 
