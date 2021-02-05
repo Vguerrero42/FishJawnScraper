@@ -83,5 +83,4 @@ fishShelve.close()
 # fish1 :{stuff},
 # fish2:{stuff}
 # }
-# after building fish "profiles" all data written to text fishshelve
 
