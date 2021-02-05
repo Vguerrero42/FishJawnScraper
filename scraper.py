@@ -12,18 +12,19 @@ ua = UserAgent()
 
 fishDataPath = '~/Projects/FishJawnDBData'
 
-
-hrefStripper = re.compile(r'<li><a( class="mw-redirect")? href="/(.*?)"')
-
-nameRegex = re.compile(r'(wiki/)(.*)')
-
 #inital wiki page with list of marine life in NYC/Jersey area
 fishWikiUrl = 'https://en.wikipedia.org/wiki/Marine_life_of_New_York%E2%80%93New_Jersey_Harbor_Estuary'
 
-fishShelve = shelve.open('fishShelve')
-fishData = {}
+#regex to grab links
+hrefStripper = re.compile(r'<li><a( class="mw-redirect")? href="/(.*?)"')
 
-#function to grab html
+#regex to grab fish name from links
+nameRegex = re.compile(r'(wiki/)(.*)')
+
+
+fishShelve = shelve.open('fishShelve')
+
+#function to grab html and build soup object
 def getPage(url) :
   header = {'User-Agent':str(ua.random)}
   res =  requests.get(url,headers=header)
@@ -37,15 +38,12 @@ currentPage = getPage(fishWikiUrl)
 #list of links under "fish"
 fishes =  currentPage.select('#mw-content-text > div.mw-parser-output > ul:nth-child(13)')
 
-#regex to grab links
+
 linkList = hrefStripper.findall(str(fishes[0]))
 
 
 #Navigate list, for each fish go to wiki page,grab first paragrahph OR description paragraph
-
-
 def buildFishObj() :
-  count = 0
   for link in linkList :
     description = ''
     currentPage = getPage(f'https://en.wikipedia.org/{link[1]}')
@@ -56,9 +54,8 @@ def buildFishObj() :
 
       description = currentPage.find(class_='mw-empty-elt').find_next_sibling("p").text.strip()      
     except:
-      count += 1
-      # print(f'ERROR COUNT {count}')
-      # print(f'ERROR LINK {link[1]}')
+      print(f'ERROR COUNT {count}')
+      print(f'ERROR LINK {link[1]}')
       # after building fish "profiles" all data written to text FishShelve
     fishShelve[f'{name}'] =  description
 
