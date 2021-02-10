@@ -2,9 +2,6 @@ import bs4
 import requests
 import re
 from fake_useragent import UserAgent
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-import shelve
 import os
 import json
 
@@ -24,8 +21,8 @@ hrefStripper = re.compile(r'<li><a( class="mw-redirect")? href="/(.*?)"')
 nameRegex = re.compile(r'(wiki/)(.*)')
 
 
-# fishShelve = shelve.open('fishShelve')
 fishData = {}
+
 #function to grab html and build soup object
 def getPage(url) :
   header = {'User-Agent':str(ua.random)}
@@ -40,7 +37,7 @@ currentPage = getPage(fishWikiUrl)
 #list of links under "fish"
 fishes =  currentPage.select('#mw-content-text > div.mw-parser-output > ul:nth-child(13)')
 
-
+#cleaned list of links without html
 linkList = hrefStripper.findall(str(fishes[0]))
 
 
@@ -51,16 +48,17 @@ def buildFishObj() :
     currentPage = getPage(f'https://en.wikipedia.org/{link[1]}')
     name =  nameRegex.findall(link[1])[0][1]
     try:
-      #look for h2 tag with id of description and grab that
+      #look for h2 tag with id of description and grab that then find paragraph under it
       # description = currentPage.find(id="Description").find_parent(). find_next_sibling("p").text.strip()
 
+      #this just grabs first paragraph 
       description = currentPage.find(class_='mw-empty-elt').find_next_sibling("p").text.strip()      
     except:
-      #for debugging,initial searched for id of description but wiki articles are not uniform so changed to searching for first paragraph which in every wiki article is generally a quick description of subject.
+      #for debugging,initially searched for id of description but wiki articles are not uniform so changed to searching for first paragraph which in every wiki article is generally a quick description of subject.
       print(f'ERROR COUNT {count}')
       print(f'ERROR LINK {link[1]}')
-      # after building fish "profiles" all data written to text FishShelve
-    # fishShelve[f'{name}'] =  description
+    
+    # after building fish "profiles" all data written to text fishData object
     fishData[f'{name}'] =  description
 
 
@@ -71,16 +69,11 @@ buildFishObj()
 for key in fishData.keys() :
   print(key,fishData[f'{key}'])
 
+#writing data to file to be used for DB seed
 with open(f'{fishDataPath}/fishData.txt','a') as path :
   json.dump(fishData,path)
-# fishShelve.close()
 
 
 
 
-# grabs [Locations:list,general stats(descriptions),]
-# builds object fishes = {
-# fish1 :{stuff},
-# fish2:{stuff}
-# }
 
