@@ -6,11 +6,13 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import shelve
 import os
+import json
 
 
 ua = UserAgent()
 
-fishDataPath = '~/Projects/FishJawnDBData'
+fishDataPath = '/home/victor/Projects/FishJawnDBData'
+
 
 #inital wiki page with list of marine life in NYC/Jersey area
 fishWikiUrl = 'https://en.wikipedia.org/wiki/Marine_life_of_New_York%E2%80%93New_Jersey_Harbor_Estuary'
@@ -22,8 +24,8 @@ hrefStripper = re.compile(r'<li><a( class="mw-redirect")? href="/(.*?)"')
 nameRegex = re.compile(r'(wiki/)(.*)')
 
 
-fishShelve = shelve.open('fishShelve')
-
+# fishShelve = shelve.open('fishShelve')
+fishData = {}
 #function to grab html and build soup object
 def getPage(url) :
   header = {'User-Agent':str(ua.random)}
@@ -58,17 +60,20 @@ def buildFishObj() :
       print(f'ERROR COUNT {count}')
       print(f'ERROR LINK {link[1]}')
       # after building fish "profiles" all data written to text FishShelve
-    fishShelve[f'{name}'] =  description
+    # fishShelve[f'{name}'] =  description
+    fishData[f'{name}'] =  description
+
 
     
 buildFishObj()
 
 #for debugging to ensure data written correctly.
-for key in fishShelve.keys() :
-  print(key,fishShelve[f'{key}'])
+for key in fishData.keys() :
+  print(key,fishData[f'{key}'])
 
-
-fishShelve.close()
+with open(f'{fishDataPath}/fishData.txt','a') as path :
+  json.dump(fishData,path)
+# fishShelve.close()
 
 
 
